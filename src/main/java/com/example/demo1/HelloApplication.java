@@ -3,6 +3,7 @@ package com.example.demo1;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.Socket;
@@ -17,8 +18,7 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
 
-
-        Socket clientSocket = new Socket("192.168.1.160", 5000);
+        Socket clientSocket = new Socket("localhost", 5000);
     }
 
     public static void main(String[] args) {

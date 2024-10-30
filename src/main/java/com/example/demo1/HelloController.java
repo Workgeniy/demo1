@@ -1,5 +1,6 @@
 package com.example.demo1;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -22,32 +23,59 @@ import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
 public class HelloController {
-    Socket clientSocket = new Socket("192.168.1.160", 5000);
+    Socket clientSocket = new Socket("localhost", 5000);
     ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
     File path;
+    Logger log = new Logger();
 
     @FXML
-    ImageView imageView;
+    private ImageView imageView;
     @FXML
-    MediaView mediaView;
+    private MediaView mediaView;
     @FXML
-    Label label;
+    private Label label;
+    @FXML
+    private Label logger;
 
     public HelloController() throws IOException {
+        log = new Logger();
     }
+
+
 
     @FXML
     protected void onSendButtonClick() throws IOException {
-        if (imageView.getImage() != null) {
+        if (imageView.getImage() == null) {
+            logger.setText("файл не корректный");
+            return;
         }
         CompletableFuture.runAsync(() -> {
         try {
+            Platform.runLater(new Runnable() { // так как в другом потоке происходит
+                @Override
+                public void run() {
+                    logger.setText(log.MessageLogger("чтение файла " + path.getName()));
+                }
+            });
 
             byte [] array = Files.readAllBytes(Paths.get(path.getPath()));
             out.writeObject(array);
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    logger.setText(log.MessageLogger("отправка файла " + path.getName()));
+                }
+            });
             //out.flush();
         }
+
         catch (IOException e){
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    logger.setText(log.MessageLogger("не удалась отправка отправка файла " + path.getName()));
+                }});
             e.printStackTrace();
         }});
     }
@@ -77,7 +105,7 @@ public class HelloController {
                 mediaView = new MediaView(player);
                 player.play();
             } else if (fileStr.endsWith(".txt")){
-                label = new Label(path.getName());
+                label.setText(path.getName());
             }
         }
     }

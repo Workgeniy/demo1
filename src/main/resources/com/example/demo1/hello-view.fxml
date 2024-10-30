@@ -14,10 +14,12 @@
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
   </padding>
 
+  <Label fx:id="logger"/>
+  <Label fx:id="label"/>
   <Button text="Select" onAction="#onSelectButtonClick"/>
   <Button text="Send" onAction="#onSendButtonClick"/>
 
-  <Label fx:id="label"/>
+
   <VBox maxWidth="500" maxHeight="500">
     <ImageView fx:id="imageView"/>
     <MediaView fx:id="mediaView"/>
